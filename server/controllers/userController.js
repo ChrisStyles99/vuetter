@@ -31,7 +31,8 @@ userController.register = async (req, res) => {
 
     res.json({ error: false, msg: 'User created' });
   } catch (err) {
-    res.json(err);
+    const msg = err.errors[0].message;
+    res.json({error: true, msg});
   }
 };
 
@@ -46,9 +47,7 @@ userController.login = async (req, res) => {
     });
 
     if (!user) {
-      return res
-        .status(404)
-        .json({ error: true, msg: 'Email does not exists' });
+      return res.json({ error: true, msg: 'Email does not exists' });
     }
     const validPassword = await bcrypt.compare(password, user.password);
     if (!validPassword) {
@@ -66,9 +65,10 @@ userController.login = async (req, res) => {
       httpOnly: true,
     });
 
-    res.status(200).end();
-  } catch (error) {
-    res.status(500).json(error);
+    res.status(200).json({error: false, msg: 'You are now logged in'});
+  } catch (err) {
+    const msg = err.errors[0].message;
+    res.json({error: true, msg});
   }
 };
 

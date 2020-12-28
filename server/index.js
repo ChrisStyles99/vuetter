@@ -16,7 +16,10 @@ const PORT = process.env.PORT || 3000;
 const verifyToken = require('./middlewares/verifyToken');
 
 // Middlewares
-app.use(cors({credentials: true}));
+app.use(cors({
+  origin: 'http://localhost:8080',
+  credentials: true
+}));
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
