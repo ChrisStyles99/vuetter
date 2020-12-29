@@ -1,13 +1,13 @@
 <template>
-  <div class="profile container">
+  <div class="user-profile container">
     <div class="profile-info">
       <h1>Profile</h1>
-      <h2>{{user.name}}</h2>
-      <h3>@{{user.username}}</h3>
-      <h2>{{user.email}}</h2>
+      <h2>{{profile.name}}</h2>
+      <h3>@{{profile.username}}</h3>
+      <h2>{{profile.email}}</h2>
     </div>
     <div class="profile-posts">
-      <ProfilePost v-for="post in user.posts" :key="post.id" :post="post" :user="{id: user.id, name: user.name, username: user.username}"/>
+      <ProfilePost v-for="post in profile.posts" :key="post.id" :post="post" :user="{id: profile.id, name: profile.name, username: profile.username}"/>
     </div>
   </div>
 </template>
@@ -15,6 +15,7 @@
 <script>
 import { computed } from 'vue';
 import { useStore } from 'vuex';
+import {useRoute} from 'vue-router';
 import ProfilePost from '@/components/ProfilePost.vue';
 
 export default {
@@ -23,27 +24,28 @@ export default {
   },
   setup() {
     const store = useStore();
-    const user = computed(() => {
-      return store.getters.user;
+    const route = useRoute();
+
+    const id = route.params.id;
+    const profile = computed(() => {
+      return store.getters.profile;
     });
-    
+
     const getProfile = async() => {
-      if(!user.value) {
-        await store.dispatch('getOwnProfile');
-      }
+      await store.dispatch('getProfiles', id);
     };
 
     getProfile();
 
     return {
-      user
+      profile
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-  .profile {
+  .user-profile {
     display: grid;
     grid-template-columns: 20% 2% 60% 18%;
 

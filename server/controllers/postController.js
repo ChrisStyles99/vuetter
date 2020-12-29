@@ -15,8 +15,9 @@ postController.newPost = async (req, res) => {
     });
 
     res.status(201).json(post);
-  } catch (error) {
-    res.status(500).json(error);
+  } catch (err) {
+    const msg = err.errors[0].message;
+    res.json({error: true, msg});
   }
 };
 
@@ -52,7 +53,7 @@ postController.deletePost = async (req, res) => {
 postController.friendsPosts = async (req, res) => {
   try {
     const posts = await sequelize.query(
-      'SELECT posts.*, users.* FROM posts JOIN friends ON friends.friend_id = posts.user_id JOIN users ON users.id = posts.user_id WHERE friends.user_id = ?',
+      'SELECT posts.*, users.* FROM posts JOIN friends ON friends.friend_id = posts.user_id JOIN users ON users.id = posts.user_id WHERE friends.user_id = ? ORDER BY posts.createdAt DESC',
       { replacements: [req.user], type: QueryTypes.SELECT }
     );
     res.json(posts);

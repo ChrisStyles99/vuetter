@@ -6,7 +6,8 @@
       </h1>
       <div class="profile" v-if="isLoggedIn">
         <input type="text" />
-        <router-link class="profile-link" to="/profile">Profile name</router-link>
+        <router-link class="profile-link" to="/profile">{{user.name}}</router-link>
+        <router-link class="profile-link" to="/logout">Logout</router-link>
       </div>
       <div class="auth" v-else>
         <router-link class="auth-link" to="/login">Login</router-link>
@@ -23,13 +24,23 @@ import {useStore} from 'vuex';
 export default {
   setup() {
     const store = useStore();
-
+    const user = computed(() => {
+      return store.getters.user;
+    });
     const isLoggedIn = computed(() => {
       return store.getters.isLoggedIn;
     });
+    
+    const getProfile = async() => {
+      if(!user.value) {
+        await store.dispatch('getOwnProfile');
+      }
+    };
+
+    getProfile();
 
     return {
-      isLoggedIn
+      isLoggedIn, user
     }
   }
 };
@@ -65,6 +76,7 @@ export default {
       input {
         border-radius: 12px;
         border: none;
+        font-size: 1.5rem;
         padding: 10px;
         margin-right: 10px;
       }
@@ -74,6 +86,13 @@ export default {
         font-size: 1.5rem;
         color: $dark-text;
         margin-left: 10px;
+        padding: 10px;
+        border-radius: 12px;
+        transition: 0.3s ease all;
+
+        &:hover {
+          background-color: $secondary;
+        }
       }
     }
 

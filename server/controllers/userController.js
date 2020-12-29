@@ -61,9 +61,11 @@ userController.login = async (req, res) => {
     const token = jwt.sign(payload, process.env.SECRET, { expiresIn: '1h' });
 
     res.cookie('token', token, {
-      maxAge: 3600,
+      maxAge: 3600000,
       httpOnly: true,
     });
+
+    res.cookie('isLoggedIn', true, {maxAge: 3600000});
 
     res.status(200).json({error: false, msg: 'You are now logged in'});
   } catch (err) {
@@ -120,9 +122,15 @@ userController.getProfile = async (req, res) => {
     });
 
     res.status(200).json(user);
-  } catch (error) {
-    res.status(500).json(error);
+  } catch (err) {
+    res.status(500).json({error: true, msg: err});
   }
+};
+
+userController.logout = async(req, res) => {
+  res.clearCookie('token');
+  res.clearCookie('isLoggedIn');
+  res.status(200).json({error: false, msg: "You have successfully logged out"});
 };
 
 module.exports = userController;
