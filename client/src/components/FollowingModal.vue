@@ -1,7 +1,8 @@
 <template>
   <div class="following">
-    <h1>Following - {{users.length}}</h1>
+    <h1>Following</h1>
     <i class="fas fa-times" @click="hideModal"></i>
+    <h1 v-if="users.length === 0">The user doesn't follow more users</h1>
     <div v-for="user in users" :key="user.id" class="card">
       <h1 v-if="profileId === user.id">{{user.name}}</h1>
       <h1 v-else><router-link class="profile-link" :to="`/profiles/${user.id}`">{{user.name}}</router-link></h1>

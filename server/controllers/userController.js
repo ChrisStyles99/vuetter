@@ -77,7 +77,7 @@ userController.login = async (req, res) => {
 userController.getOwnProfile = async (req, res) => {
   try {
     const user = await User.findByPk(req.user, {
-      include: ['posts', 'friends'],
+      include: ['posts', 'friends', 'likedPosts'],
       order: [['posts', 'createdAt', 'DESC']]
     });
 

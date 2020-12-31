@@ -23,7 +23,7 @@
         }"
       />
     </div>
-    <teleport to="body">
+    <teleport to="#app">
       <FollowingModal
         v-if="modal"
         :users="profile.friends"
@@ -72,6 +72,7 @@ export default {
       }
 
       await store.dispatch('getProfiles', id);
+      console.log(profile.value);
     };
 
     getProfile();

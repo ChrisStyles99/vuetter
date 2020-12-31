@@ -1,7 +1,7 @@
 const Post = require('../database/models/Post');
 const sequelize = require('../database/db');
-const {QueryTypes} = require('sequelize');
-const User = require('../database/models/User');
+const { QueryTypes, Op } = require('sequelize');
+const Like = require('../database/models/Like');
 
 const postController = {};
 
@@ -17,7 +17,7 @@ postController.newPost = async (req, res) => {
     res.status(201).json(post);
   } catch (err) {
     const msg = err.errors[0].message;
-    res.json({error: true, msg});
+    res.json({ error: true, msg });
   }
 };
 
@@ -27,10 +27,23 @@ postController.userPosts = async (req, res) => {
       where: {
         user_id: req.user,
       },
+      include: ['postLikes'],
     });
     res.status(200).json(posts);
   } catch (error) {
     res.status(500).json(error);
+  }
+};
+
+postController.singlePost = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const post = await Post.findByPk(id, {
+      include: ['postLikes'],
+    });
+    res.status(200).json({ error: false, post });
+  } catch (err) {
+    res.json({ error: true, msg: err });
   }
 };
 
@@ -53,12 +66,40 @@ postController.deletePost = async (req, res) => {
 postController.friendsPosts = async (req, res) => {
   try {
     const posts = await sequelize.query(
-      'SELECT posts.*, users.* FROM posts JOIN friends ON friends.friend_id = posts.user_id JOIN users ON users.id = posts.user_id WHERE friends.user_id = ? ORDER BY posts.createdAt DESC',
-      { replacements: [req.user], type: QueryTypes.SELECT }
+      'SELECT posts.*, users.name, users.username, users.email, users.createdAt FROM posts RIGHT JOIN users ON posts.user_id = users.id WHERE posts.user_id IN (SELECT friend_id FROM friends WHERE user_id = ?) OR posts.user_id = ? ORDER BY posts.createdAt DESC',
+      { replacements: [req.user, req.user], type: QueryTypes.SELECT }
     );
     res.json(posts);
   } catch (error) {
     res.status(500).json(error);
+  }
+};
+
+postController.likePost = async (req, res) => {
+  try {
+    const id = req.params.id;
+    await Like.create({
+      user_id: req.user,
+      post_id: id,
+    });
+    res.status(201).json({ error: false, msg: 'Liked new post' });
+  } catch (err) {
+    res.json({ error: true, msg: err });
+  }
+};
+
+postController.removeLike = async (req, res) => {
+  try {
+    const id = req.params.id;
+    await Like.destroy({
+      where: {
+        [Op.and]: [{ user_id: req.user }, { post_id: id }],
+      },
+    });
+
+    res.status(200).json({ error: false, msg: 'Removed like' });
+  } catch (err) {
+    res.json({ error: true, msg: err });
   }
 };
 
