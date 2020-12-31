@@ -1,5 +1,5 @@
 const {Router} = require('express');
-const {register, login, addFriend, getOwnProfile, getProfile, logout} = require('../controllers/userController');
+const {register, login, addFriend, getOwnProfile, getProfile, logout, removeFriend} = require('../controllers/userController');
 const verifyToken = require('../middlewares/verifyToken');
 const router = Router();
 
@@ -14,5 +14,7 @@ router.get('/profile', verifyToken, getOwnProfile);
 router.get('/profiles/:id', verifyToken, getProfile);
 
 router.delete('/logout', verifyToken, logout);
+
+router.delete('/remove-friend/:id', verifyToken, removeFriend);
 
 module.exports = router;

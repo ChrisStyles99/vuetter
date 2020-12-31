@@ -14,7 +14,11 @@ export default createStore({
     loginError: false,
     registerError: false,
     addPostError: false,
-    getProfilesError: false
+    getProfilesError: false,
+    followingError: false,
+    followingMessage: false,
+    unfollowError: false,
+    unfollowMessage: false
   },
   mutations: {
     register_error(state, error) {
@@ -54,6 +58,18 @@ export default createStore({
       state.posts = false;
       state.singlePost = [];
       state.profile = [];
+    },
+    follow_error(state, data) {
+      state.followingError = data;
+    },
+    follow(state, data) {
+      state.followingMessage = data;
+    },
+    unfollow_error(state, data) {
+      state.unfollowError = data;
+    },
+    unfollow(state, data) {
+      state.unfollowMessage = data;
     }
   },
   actions: {
@@ -107,6 +123,22 @@ export default createStore({
       const res = await axios.delete(`${baseUrl}/users/logout`);
       console.log(res.data);
       commit('logout');
+    },
+    async followUser({commit}, id) {
+      const res = await axios.post(`${baseUrl}/users/add-friend/${id}`);
+      if(res.data.error === true) {
+        commit('follow_error', res.data.msg);
+      } else {
+        commit('follow', res.data.msg);
+      }
+    },
+    async unfollowUser({commit}, id) {
+      const res = await axios.delete(`${baseUrl}/users/remove-friend/${id}`);
+      if(res.data.error === true) {
+        commit('unfollow_error', res.data.msg);
+      } else {
+        commit('unfollow', res.data.msg);
+      }
     }
   },
   getters: {

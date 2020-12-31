@@ -77,7 +77,8 @@ userController.login = async (req, res) => {
 userController.getOwnProfile = async (req, res) => {
   try {
     const user = await User.findByPk(req.user, {
-      include: ['posts', 'friends']
+      include: ['posts', 'friends'],
+      order: [['posts', 'createdAt', 'DESC']]
     });
 
     res.status(200).json(user);
@@ -94,8 +95,8 @@ userController.addFriend = async (req, res) => {
       friend_id: id,
     });
     res.status(201).json({ error: false, msg: 'Following new person' });
-  } catch (error) {
-    res.status(500).json(error);
+  } catch (err) {
+    res.status(500).json({error: true, err: msg});
   }
 };
 
@@ -109,8 +110,8 @@ userController.removeFriend = async (req, res) => {
     });
 
     res.status(200).json({ error: false, msg: 'Unfollowing the person' });
-  } catch (error) {
-    res.status(500).json(error);
+  } catch (err) {
+    res.status(500).json({error: true, err: msg});
   }
 };
 

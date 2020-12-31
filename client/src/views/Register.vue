@@ -170,6 +170,7 @@ export default {
         );
         color: $dark-text;
         padding: 10px 0;
+        cursor: pointer;
       }
     }
 
