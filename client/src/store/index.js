@@ -9,7 +9,7 @@ export default createStore({
     isLoggedIn: document.cookie.includes('isLoggedIn=true') === true ? true : false,
     user: false,
     posts: false,
-    singlePost: [],
+    singlePost: false,
     profile: [],
     loginError: false,
     registerError: false,
@@ -18,7 +18,8 @@ export default createStore({
     followingError: false,
     followingMessage: false,
     unfollowError: false,
-    unfollowMessage: false
+    unfollowMessage: false,
+    singlePostError: false
   },
   mutations: {
     register_error(state, error) {
@@ -45,6 +46,7 @@ export default createStore({
     },
     add_post(state, data) {
       state.user.posts.unshift(data);
+      state.posts.unshift(data);
     },
     get_profiles_error(state) {
       state.getProfilesError = "Sorry, we're having trouble getting the user profile";
@@ -70,13 +72,20 @@ export default createStore({
     },
     unfollow(state, data) {
       state.unfollowMessage = data;
+    },
+    single_post_error(state) {
+      state.singlePostError = "We couldn't retrieve the post data";
+    },
+    single_post(state, data) {
+      state.singlePost = data;
+    },
+    empty_single_post(state) {
+      state.singlePost = {};
     }
   },
   actions: {
     async register({commit}, data) {
-      // const {name, username, email, password} = data;
       const res = await axios.post(`${baseUrl}/users/register`, data);
-      console.log(res.data);
       if(res.data.error === true) {
         commit('register_error', res.data.msg);
       } else {
@@ -85,7 +94,6 @@ export default createStore({
     },
     async login({commit}, data) {
       const res = await axios.post(`${baseUrl}/users/login`, data);
-      console.log(res.data);
       if(res.data.error === true) {
         commit('login_error', res.data.msg);
       } else {
@@ -102,6 +110,14 @@ export default createStore({
     async getPosts({commit}) {
       const res = await axios.get(`${baseUrl}/posts/`);
       commit('friend_posts', res.data);
+    },
+    async getSinglePost({commit}, id) {
+      const res = await axios.get(`${baseUrl}/posts/post/${id}`);
+      if(res.data.error === true) {
+        commit('single_post_error');
+      } else {
+        commit('single_post', res.data.post);
+      }
     },
     async addPost({commit}, data) {
       const res = await axios.post(`${baseUrl}/posts/new-post`, data);
@@ -147,7 +163,8 @@ export default createStore({
     isLoggedIn: state => state.isLoggedIn,
     user: state => state.user,
     posts: state => state.posts,
-    profile: state => state.profile
+    profile: state => state.profile,
+    singlePost: state => state.singlePost
   },
   modules: {
   }

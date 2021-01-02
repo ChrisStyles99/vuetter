@@ -8,7 +8,7 @@
     <div class="posts">
       <AddPost />
       <h3 v-if="posts.length == 0">Sorry, you don't have posts to show :(</h3>
-      <Post v-for="post in posts" :key="post.id" :post="post" />
+      <Post v-for="post in posts" :key="post.id" :post="post" :user="user" />
     </div>
   </div>
 </template>
@@ -62,7 +62,7 @@ export default {
 
     .profile-information {
       background-color: $bg-color;
-      height: 20vh;
+      height: 220px;
       border-radius: 12px;
       box-shadow: $shadow;
 

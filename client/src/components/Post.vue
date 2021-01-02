@@ -1,21 +1,34 @@
 <template>
   <div class="post">
     <div class="post-profile">
-      <h3><router-link class="user-link" :to="`/profiles/${post.user_id}`">{{post.name}}</router-link></h3>
+      <h3 v-if="user.id == post.user_id">{{post.name}}</h3>
+      <h3 v-if="user.id != post.user_id"><router-link class="user-link" :to="`/profiles/${post.user_id}`">{{post.name}}</router-link></h3>
       <p>@{{post.username}}</p>
     </div>
-    <div class="post-content">
+    <div class="post-content" @click="goToPost(post.id)">
       <p>{{post.content}}</p>
     </div>
-    <div class="post-likes">
+    <div class="post-likes" @click="goToPost(post.id)">
       {{post.likes}} <i class="fas fa-heart"></i><i class="far fa-heart"></i>
     </div>
   </div>
 </template>
 
 <script>
+import { useRouter } from 'vue-router'
 export default {
-  props: ['post']
+  props: ['post', 'user'],
+  setup() {
+    const router = useRouter();
+
+    const goToPost = id => {
+      router.push(`/post/${id}`);
+    }
+
+    return {
+      goToPost
+    }
+  }
 }
 </script>
 
@@ -43,11 +56,13 @@ export default {
 
     .post-content {
       margin-left: 10px;
+      cursor: pointer;
     }
 
     .post-likes {
       margin-left: 10px;
       margin-bottom: 5px;
+      cursor: pointer;
     }
   }
 </style>

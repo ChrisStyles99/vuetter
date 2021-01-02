@@ -23,6 +23,10 @@ body {
   font-family: 'Fira Sans Condensed', sans-serif;
 }
 
+::-webkit-scrollbar {
+  display: none;
+}
+
 .wave-svg {
   position: absolute;
   top: 80px;

@@ -41,7 +41,7 @@ export default {
   .add-post {
     form {
       position: relative;
-      width: 98%;
+      width: 99%;
 
       textarea {
         width: inherit;

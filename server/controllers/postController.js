@@ -39,7 +39,7 @@ postController.singlePost = async (req, res) => {
   try {
     const id = req.params.id;
     const post = await Post.findByPk(id, {
-      include: ['postLikes'],
+      include: ['postLikes', 'user'],
     });
     res.status(200).json({ error: false, post });
   } catch (err) {
@@ -82,6 +82,12 @@ postController.likePost = async (req, res) => {
       user_id: req.user,
       post_id: id,
     });
+    await Post.increment('likes', {
+      by: 1,
+      where: {
+        id
+      }
+    });
     res.status(201).json({ error: false, msg: 'Liked new post' });
   } catch (err) {
     res.json({ error: true, msg: err });
@@ -95,6 +101,13 @@ postController.removeLike = async (req, res) => {
       where: {
         [Op.and]: [{ user_id: req.user }, { post_id: id }],
       },
+    });
+
+    await Post.increment('likes', {
+      by: -1,
+      where: {
+        id
+      }
     });
 
     res.status(200).json({ error: false, msg: 'Removed like' });

@@ -46,8 +46,14 @@ const routes = [
     name: 'Logout',
     component: () => import(/* webpackChunkName: "logout" */'../views/Logout.vue'),
     meta: {requiresAuth: true}
+  },
+  {
+    path: '/post/:id',
+    name: 'SinglePost',
+    component: () => import(/* webpackChunkName: "singlePost" */'../views/SinglePost.vue'),
+    meta: {requiresAuth: true}
   }
-]
+];
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
