@@ -10,9 +10,8 @@
       <button class="modal-btn" @click="modal = true">Following</button>
     </div>
     <div class="profile-posts">
-      <h2 v-if="profile.posts.length == 0">Sorry, the user doesn't have any posts</h2>
+      <!-- <h2 v-if="profile.posts.length == 0">Sorry, the user doesn't have any posts</h2> -->
       <ProfilePost
-        v-else
         v-for="post in profile.posts"
         :key="post.id"
         :post="post"
@@ -20,6 +19,7 @@
           id: profile.id,
           name: profile.name,
           username: profile.username,
+          likes: user.likedPosts
         }"
       />
     </div>
@@ -61,6 +61,9 @@ export default {
     const user = computed(() => {
       return store.getters.user;
     });
+    // const getProfileError = computed(() => {
+    //   return store.getters.getProfilesError;
+    // });
 
     const getProfile = async () => {
       if (!user.value) {
@@ -72,16 +75,21 @@ export default {
       }
 
       await store.dispatch('getProfiles', id);
-      console.log(profile.value);
+
+      // if(getProfileError.value !== false) {
+      //   return router.push('/');
+      // }
     };
 
     getProfile();
 
-    user.value.friends.forEach((friend) => {
+    if(user.value.friends != null) {
+      user.value.friends.forEach((friend) => {
       if (friend.id == id) {
         alreadyFriend.value = true;
       }
     });
+    }
 
     const follow = async () => {
       await store.dispatch('followUser', id);
@@ -120,6 +128,7 @@ export default {
     background-color: $bg-color;
     border-radius: 12px;
     box-shadow: $shadow;
+    max-height: 300px;
 
     h1,
     h2,

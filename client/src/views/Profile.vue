@@ -8,7 +8,9 @@
       <button @click="modal = true">Following</button>
     </div>
     <div class="profile-posts">
-      <ProfilePost v-for="post in user.posts" :key="post.id" :post="post" :user="{id: user.id, name: user.name, username: user.username}"/>
+      <ProfilePost v-for="post in user.posts" :key="post.id" :post="post" :user="{id: user.id, name: user.name, username: user.username, likes: user.likedPosts}">
+        <button @click="deletePost(post.id)">Delete post</button>
+      </ProfilePost>
     </div>
     <teleport to="body">
       <FollowingModal v-if="modal" :users="user.friends" @hide-modal="hideModal" />
@@ -47,8 +49,13 @@ export default {
       modal.value = false;
     };
 
+    const deletePost = async(id) => {
+      await store.dispatch('removePost', id);
+      await store.dispatch('getOwnProfile');
+    }
+
     return {
-      user, modal, hideModal
+      user, modal, hideModal, deletePost
     }
   }
 }
@@ -64,7 +71,7 @@ export default {
       background-color: $bg-color;
       border-radius: 12px;
       box-shadow: $shadow;
-      max-height: 40vh;
+      max-height: 300px;
       
       h1, h2, h3, button {
         margin-left: 10px;
@@ -90,6 +97,22 @@ export default {
     .profile-posts {
       grid-column: 3 / 4;
       overflow-y: scroll;
+
+      button {
+        background-color: $dark-text;
+        font-size: 1.2rem;
+        border-radius: 12px;
+        border: 2px solid $error-text;
+        padding: 5px 10px;
+        cursor: pointer;
+        color: $error-text;
+        transition: 0.3s ease all;
+
+        &:hover {
+          color: $dark-text;
+          background-color: $error-text;
+        }
+      }
     }
   }
 

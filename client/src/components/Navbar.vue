@@ -5,7 +5,9 @@
         <router-link class="home-link" to="/">Vuetter</router-link>
       </h1>
       <div class="profile" v-if="isLoggedIn">
-        <input type="text" />
+        <form @submit.prevent="searchPost">
+          <input type="text" v-model="searchTerm"/>
+        </form>
         <router-link class="profile-link" to="/profile">{{user.name}}</router-link>
         <router-link class="profile-link" to="/logout">Logout</router-link>
       </div>
@@ -18,18 +20,21 @@
 </template>
 
 <script>
-import {computed} from 'vue';
+import {computed, ref} from 'vue';
 import {useStore} from 'vuex';
+import { useRouter } from 'vue-router';
 
 export default {
   setup() {
     const store = useStore();
+    const router = useRouter();
     const user = computed(() => {
       return store.getters.user;
     });
     const isLoggedIn = computed(() => {
       return store.getters.isLoggedIn;
     });
+    const searchTerm = ref('');
     
     const getProfile = async() => {
       if(!user.value) {
@@ -37,10 +42,16 @@ export default {
       }
     };
 
+    const searchPost = () => {
+      console.log(searchTerm.value);
+      router.push({name: 'Search', query: {term: searchTerm.value}});
+      searchTerm.value = '';
+    }
+
     getProfile();
 
     return {
-      isLoggedIn, user
+      isLoggedIn, user, searchTerm, searchPost
     }
   }
 };
@@ -70,15 +81,20 @@ export default {
     }
 
     .profile {
-
+      flex-direction: row;
+      justify-content: space-between;
       align-items: center;
 
-      input {
+      form {
+        display: inline-block;
+
+        input {
         border-radius: 12px;
         border: none;
         font-size: 1.5rem;
         padding: 10px;
         margin-right: 10px;
+      }
       }
 
       .profile-link {

@@ -53,7 +53,7 @@ postController.deletePost = async (req, res) => {
 
     await Post.destroy({
       where: {
-        id,
+        [Op.and]: [{id}, {user_id: req.user}]
       },
     });
 
@@ -88,7 +88,8 @@ postController.likePost = async (req, res) => {
         id
       }
     });
-    res.status(201).json({ error: false, msg: 'Liked new post' });
+    const post = await Post.findByPk(id);
+    res.status(201).json({ error: false, msg: 'Liked new post', post});
   } catch (err) {
     res.json({ error: true, msg: err });
   }

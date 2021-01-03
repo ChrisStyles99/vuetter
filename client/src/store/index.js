@@ -46,7 +46,14 @@ export default createStore({
     },
     add_post(state, data) {
       state.user.posts.unshift(data);
-      state.posts.unshift(data);
+      state.posts.unshift({
+        name: state.user.name,
+        username: state.user.username,
+        content: data.content,
+        likes: data.likes,
+        user_id: state.user.id,
+        id: data.id
+      });
     },
     get_profiles_error(state) {
       state.getProfilesError = "Sorry, we're having trouble getting the user profile";
@@ -79,8 +86,14 @@ export default createStore({
     single_post(state, data) {
       state.singlePost = data;
     },
-    empty_single_post(state) {
-      state.singlePost = {};
+    like_post(state, data) {
+      state.user.likedPosts.push(data);
+    },
+    remove_like(state, id) {
+      state.user.likedPosts.filter(like => like.id != id);
+    },
+    remove_post(state, id) {
+      state.user.posts.filter(post => post.id != id);
     }
   },
   actions: {
@@ -155,6 +168,23 @@ export default createStore({
       } else {
         commit('unfollow', res.data.msg);
       }
+    },
+    async likePost({commit}, id) {
+      const res = await axios.post(`${baseUrl}/posts/like-post/${id}`);
+      console.log(res.data);
+      if(res.data.error === false) {
+        commit('like_post', res.data.post);
+      }
+    },
+    async removeLike({commit}, id) {
+      await axios.delete(`${baseUrl}/posts/remove-like/${id}`);
+      commit('remove_like', id);
+    },
+    async removePost({commit}, id) {
+      const res = await axios.delete(`${baseUrl}/posts/delete-post/${id}`);
+      if(!res.data.error) {
+        commit('remove_post', id);
+      }
     }
   },
   getters: {
@@ -164,7 +194,8 @@ export default createStore({
     user: state => state.user,
     posts: state => state.posts,
     profile: state => state.profile,
-    singlePost: state => state.singlePost
+    singlePost: state => state.singlePost,
+    getProfilesError: state => state.getProfilesError
   },
   modules: {
   }

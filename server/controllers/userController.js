@@ -1,6 +1,5 @@
 const User = require('../database/models/User');
 const Friend = require('../database/models/Friend');
-const Post = require('../database/models/Post');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const { Op } = require('sequelize');

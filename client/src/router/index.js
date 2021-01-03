@@ -52,6 +52,12 @@ const routes = [
     name: 'SinglePost',
     component: () => import(/* webpackChunkName: "singlePost" */'../views/SinglePost.vue'),
     meta: {requiresAuth: true}
+  },
+  {
+    path: '/search',
+    name: 'Search',
+    component: () => import(/* webpackChunkName: "search" */'../views/Search.vue'),
+    meta: {requiresAuth: true}
   }
 ];
 
@@ -72,5 +78,11 @@ router.beforeEach((to, from, next) => {
     next();
   }
 });
+
+// router.afterEach(() => {
+//   if(store.getters.singlePost) {
+//     store.commit('empty_single_post');
+//   }
+// });
 
 export default router
