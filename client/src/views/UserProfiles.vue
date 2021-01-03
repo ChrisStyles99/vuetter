@@ -10,7 +10,7 @@
       <button class="modal-btn" @click="modal = true">Following</button>
     </div>
     <div class="profile-posts">
-      <!-- <h2 v-if="profile.posts.length == 0">Sorry, the user doesn't have any posts</h2> -->
+      <!-- <h2 v-if="postsCount == 0">Sorry, the user doesn't have any posts</h2> -->
       <ProfilePost
         v-for="post in profile.posts"
         :key="post.id"
@@ -29,6 +29,7 @@
         :users="profile.friends"
         @hide-modal="hideModal"
         :profileId="user.id"
+        :following="following"
       />
       <div v-if="modal" class="overlay"></div>
     </teleport>
@@ -61,9 +62,9 @@ export default {
     const user = computed(() => {
       return store.getters.user;
     });
-    // const getProfileError = computed(() => {
-    //   return store.getters.getProfilesError;
-    // });
+    const following = computed(() => {
+      return store.getters.profileFollowingCount;
+    });
 
     const getProfile = async () => {
       if (!user.value) {
@@ -75,10 +76,6 @@ export default {
       }
 
       await store.dispatch('getProfiles', id);
-
-      // if(getProfileError.value !== false) {
-      //   return router.push('/');
-      // }
     };
 
     getProfile();
@@ -112,7 +109,8 @@ export default {
       unfollow,
       modal,
       hideModal,
-      user
+      user,
+      following
     };
   },
 };

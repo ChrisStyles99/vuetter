@@ -11,8 +11,8 @@ export default {
     const router = useRouter();
 
     const logout = async() => {
-      router.push('/login');
       await store.dispatch('logout');
+      router.push('/login');
     };
     logout();
   }

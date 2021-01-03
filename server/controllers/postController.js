@@ -2,6 +2,7 @@ const Post = require('../database/models/Post');
 const sequelize = require('../database/db');
 const { QueryTypes, Op } = require('sequelize');
 const Like = require('../database/models/Like');
+const User = require('../database/models/User');
 
 const postController = {};
 
@@ -114,6 +115,30 @@ postController.removeLike = async (req, res) => {
     res.status(200).json({ error: false, msg: 'Removed like' });
   } catch (err) {
     res.json({ error: true, msg: err });
+  }
+};
+
+postController.search = async(req,res) => {
+  try {
+    const query = req.query.term;
+    const users = await User.findAll({
+      where: {
+        username: {
+          [Op.like]: `%${query}%`
+        }
+      }
+    });
+    const posts = await Post.findAll({
+      where: {
+        content: {
+          [Op.like]: `%${query}%`
+        }
+      },
+      include: ['user']
+    });
+    res.status(200).json({error: false, users, posts});
+  } catch (err) {
+    res.json({error: true, msg: err});
   }
 };
 

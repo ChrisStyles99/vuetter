@@ -19,7 +19,10 @@ export default createStore({
     followingMessage: false,
     unfollowError: false,
     unfollowMessage: false,
-    singlePostError: false
+    singlePostError: false,
+    searchError: false,
+    postsSearched: false,
+    usersSearched: false
   },
   mutations: {
     register_error(state, error) {
@@ -94,6 +97,13 @@ export default createStore({
     },
     remove_post(state, id) {
       state.user.posts.filter(post => post.id != id);
+    },
+    search_error(state) {
+      state.searchError = 'Sorry, we had trouble getting the posts and users';
+    },
+    search(state, data) {
+      state.postsSearched = data.posts;
+      state.usersSearched = data.users;
     }
   },
   actions: {
@@ -185,6 +195,14 @@ export default createStore({
       if(!res.data.error) {
         commit('remove_post', id);
       }
+    },
+    async searchPosts({commit}, query) {
+      const res = await axios.get(`${baseUrl}/posts/search?term=${query}`);
+      if(res.data.error === true) {
+        commit('search_error');
+      } else {
+        commit('search', res.data);
+      }
     }
   },
   getters: {
@@ -195,7 +213,12 @@ export default createStore({
     posts: state => state.posts,
     profile: state => state.profile,
     singlePost: state => state.singlePost,
-    getProfilesError: state => state.getProfilesError
+    getProfilesError: state => state.getProfilesError,
+    profileFollowingCount: state => state.profile.friends.length,
+    userFollowingCount: state => state.user.friends.length,
+    searchError: state => state.searchError,
+    postsSearched: state => state.postsSearched,
+    usersSearched: state => state.usersSearched
   },
   modules: {
   }

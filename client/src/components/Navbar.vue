@@ -43,7 +43,6 @@ export default {
     };
 
     const searchPost = () => {
-      console.log(searchTerm.value);
       router.push({name: 'Search', query: {term: searchTerm.value}});
       searchTerm.value = '';
     }

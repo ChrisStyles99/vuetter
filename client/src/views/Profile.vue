@@ -13,7 +13,7 @@
       </ProfilePost>
     </div>
     <teleport to="body">
-      <FollowingModal v-if="modal" :users="user.friends" @hide-modal="hideModal" />
+      <FollowingModal v-if="modal" :users="user.friends" @hide-modal="hideModal" :following="following"/>
       <div v-if="modal" class="overlay"></div>
     </teleport>
   </div>
@@ -35,6 +35,9 @@ export default {
     const user = computed(() => {
       return store.getters.user;
     });
+    const following = computed(() => {
+      return store.getters.userFollowingCount;
+    });
     const modal = ref(false);
     
     const getProfile = async() => {
@@ -55,7 +58,7 @@ export default {
     }
 
     return {
-      user, modal, hideModal, deletePost
+      user, modal, hideModal, deletePost, following
     }
   }
 }
