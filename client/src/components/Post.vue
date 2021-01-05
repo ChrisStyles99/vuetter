@@ -1,11 +1,12 @@
 <template>
   <div class="post">
     <div class="post-profile">
-      <h3 v-if="user.id == post.user_id">{{ post.name }}</h3>
+      <h3 v-if="user.id == post.user_id">{{ post.name }}<span style="color: #999;"><small> | {{date}}</small></span></h3>
       <h3 v-if="user.id != post.user_id">
         <router-link class="user-link" :to="`/profiles/${post.user_id}`">{{
           post.name
         }}</router-link>
+        <span style="color: #999;"><small> | {{date}}</small></span>
       </h3>
       <p>@{{ post.username }}</p>
     </div>
@@ -30,6 +31,8 @@
 import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useStore } from 'vuex';
+import moment from 'moment';
+
 export default {
   props: ['post', 'user'],
   setup(props) {
@@ -39,6 +42,9 @@ export default {
     const alreadyLiked = ref(false);
     const user = computed(() => {
       return store.getters.user;
+    });
+    const date = computed(() => {
+      return moment(props.post.createdAt).fromNow();
     });
 
     const getUser = async () => {
@@ -95,7 +101,7 @@ export default {
     return {
       goToPost,
       alreadyLiked,
-      likePost, removeLike
+      likePost, removeLike, date
     };
   },
 };

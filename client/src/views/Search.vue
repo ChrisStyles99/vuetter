@@ -21,6 +21,7 @@
             username: post.user.username,
             content: post.content,
             likes: post.likes,
+            createdAt: post.createdAt,
             user_id: post.user_id,
           }"
           :user="user"

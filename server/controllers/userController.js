@@ -121,6 +121,10 @@ userController.getProfile = async (req, res) => {
       include: ['posts', 'friends']
     });
 
+    if(!user) {
+      return res.json({error: true, msg: 'No user found'});
+    }
+
     res.status(200).json(user);
   } catch (err) {
     res.status(500).json({error: true, msg: err});

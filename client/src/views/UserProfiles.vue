@@ -1,6 +1,10 @@
 <template>
   <div class="user-profile container">
-    <div class="profile-info">
+    <div v-if="error" class="error">
+      <h1>There's no profile with that id</h1>
+      <router-link class="go-back" to="/">Go back</router-link>
+    </div>
+    <div v-if="!error" class="profile-info">
       <h1>Profile</h1>
       <h2>{{ profile.name }}</h2>
       <h3>@{{ profile.username }}</h3>
@@ -9,8 +13,7 @@
       <button class="unfollow-btn" v-if="alreadyFriend" @click="unfollow">Unfollow</button>
       <button class="modal-btn" @click="modal = true">Following</button>
     </div>
-    <div class="profile-posts">
-      <!-- <h2 v-if="postsCount == 0">Sorry, the user doesn't have any posts</h2> -->
+    <div v-if="!error" class="profile-posts">
       <ProfilePost
         v-for="post in profile.posts"
         :key="post.id"
@@ -23,7 +26,7 @@
         }"
       />
     </div>
-    <teleport to="#app">
+    <teleport v-if="!error" to="#app">
       <FollowingModal
         v-if="modal"
         :users="profile.friends"
@@ -64,6 +67,9 @@ export default {
     });
     const following = computed(() => {
       return store.getters.profileFollowingCount;
+    });
+    const error = computed(() => {
+      return store.getters.getProfilesError;
     });
 
     const getProfile = async () => {
@@ -110,7 +116,8 @@ export default {
       modal,
       hideModal,
       user,
-      following
+      following,
+      error
     };
   },
 };
@@ -121,6 +128,21 @@ export default {
   display: grid;
   grid-template-columns: 20% 2% 60% 18%;
   margin-top: 10px;
+
+  .error {
+    background-color: $bg-color;
+    border-radius: 12px;
+    box-shadow: $shadow;
+    margin: 0 auto;
+    grid-column: 3 / 4;
+    padding: 10px 15px;
+
+    .go-back {
+      text-decoration: none;
+      color: $third;
+      font-size: 1.2rem;
+    }
+  }
 
   .profile-info {
     background-color: $bg-color;

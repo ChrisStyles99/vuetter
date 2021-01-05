@@ -67,7 +67,7 @@ postController.deletePost = async (req, res) => {
 postController.friendsPosts = async (req, res) => {
   try {
     const posts = await sequelize.query(
-      'SELECT posts.*, users.name, users.username, users.email, users.createdAt FROM posts RIGHT JOIN users ON posts.user_id = users.id WHERE posts.user_id IN (SELECT friend_id FROM friends WHERE user_id = ?) OR posts.user_id = ? ORDER BY posts.createdAt DESC',
+      'SELECT posts.*, users.name, users.username, users.email FROM posts RIGHT JOIN users ON posts.user_id = users.id WHERE posts.user_id IN (SELECT friend_id FROM friends WHERE user_id = ?) OR posts.user_id = ? ORDER BY posts.createdAt DESC',
       { replacements: [req.user, req.user], type: QueryTypes.SELECT }
     );
     res.json(posts);
@@ -134,7 +134,7 @@ postController.search = async(req,res) => {
           [Op.like]: `%${query}%`
         }
       },
-      include: ['user']
+      include: ['user'],
     });
     res.status(200).json({error: false, users, posts});
   } catch (err) {

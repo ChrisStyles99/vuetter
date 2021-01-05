@@ -1,7 +1,7 @@
 <template>
   <div class="profile-post">
     <div class="post-profile">
-      <h3>{{ user.name }}</h3>
+      <h3>{{ user.name }} <span style="color: #999;"><small> | {{date}}</small></span></h3>
       <p>@{{ user.username }}</p>
     </div>
     <div class="post-content">
@@ -19,13 +19,18 @@
 </template>
 
 <script>
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useStore } from 'vuex';
+import moment from 'moment';
 export default {
   props: ['post', 'user'],
   setup(props) {
     const store = useStore();
     const alreadyLiked = ref(false);
+
+    const date = computed(() => {
+      return moment(props.post.createdAt).fromNow();
+    });
 
     props.user.likes.forEach((like) => {
       if (like.id == props.post.id) {
@@ -66,7 +71,7 @@ export default {
     };
 
     return {
-      alreadyLiked, likePost, removeLike
+      alreadyLiked, likePost, removeLike, date
     };
   },
 };

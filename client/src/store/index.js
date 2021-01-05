@@ -55,7 +55,8 @@ export default createStore({
         content: data.content,
         likes: data.likes,
         user_id: state.user.id,
-        id: data.id
+        id: data.id,
+        createdAt: data.createdAt
       });
     },
     get_profiles_error(state) {
@@ -63,6 +64,7 @@ export default createStore({
     },
     get_profile(state, data) {
       state.profile = data;
+      state.getProfilesError = false;
     },
     logout(state) {
       state.isLoggedIn = false;
